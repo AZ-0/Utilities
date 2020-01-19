@@ -14,7 +14,14 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
 configurations { extraLibs }
 
-jar { doFirst { from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } } } }
+jar
+{
+	doFirst
+	{
+		from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
+		from sourceSets.main.allSource
+	}
+}
 
 repositories
 {
@@ -35,4 +42,5 @@ task runPython(type:Exec) {
    commandLine 'py', 'script_move.py', 'Utilities', version
 }
 
+//compileJava.source(sourceSets.main.java)
 build.finalizedBy(runPython)
