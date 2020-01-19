@@ -1,7 +1,7 @@
 package fr.az.util.parsing.json.keys.types;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.Key;
+import fr.az.util.parsing.json.keys.structure.Structure;
 
 /**
  * Parse a {@linkplain JSONObject} into a {@linkplain Map}{@literal <}{@linkplain Key},{@linkplain Object}{@literal >}
@@ -21,7 +22,7 @@ import fr.az.util.parsing.json.keys.Key;
  * @param <T> the built object type
  */
 @SuppressWarnings({ "rawtypes" })
-public interface ObjectKey<T> extends Key<JSONObject, T>
+public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 {
 	List<Key> EMPTY_KEY_LIST = Collections.emptyList();
 
@@ -32,28 +33,7 @@ public interface ObjectKey<T> extends Key<JSONObject, T>
 	 * @return a T object
 	 * @throws JSONParsingException if semantic is incorrect at runtime
 	 */
-	T build(Map<Key, Object> mandatory, Map<Key, Object> optional) throws JSONParsingException;
-
-	/**
-	 * Parse a T object from a JSONObject in several steps
-	 * <ol>
-	 * <li>Get and parse each mandatory key</li>
-	 * <li>For each optional key:
-	 * 	<ul>
-	 * 		<li>Check key presence</li>
-	 * 		<li>Get key</li>
-	 * 		<li>Parse key value</li>
-	 * 	</ul>
-	 * </li>
-	 * <li>Check key duplication or unrequited presence</li>
-	 * <li>Check each <i>parsed</i> key blacklist</li>
-	 * <li>Run T build</li>
-	 * </ol>
-	 * @param source a {@link JSONObject}
-	 * @return T the parsed value
-	 * @throws JSONParsingException
-	 */
-	@Override default T parse(JSONObject source) throws JSONParsingException { return this.parse(new HashMap<>(), source); }
+	T build(List<Structure> structures) throws JSONParsingException;
 
 	/**
 	 * @param cascade
@@ -62,39 +42,38 @@ public interface ObjectKey<T> extends Key<JSONObject, T>
 	 * @throws JSONParsingException
 	 * @see ObjectKey#parse(JSONObject)
 	 */
+	@Override
 	default T parse(Map<Key, Object> cascade, JSONObject source) throws JSONParsingException
 	{
-		Map<Key, Object> mandatory = new HashMap<>(), optional = new HashMap<>();
+		List<Structure> structures = this.getStructures();
 		Set<String> parsed = new HashSet<>();
 
-		List<Key> mandatoryKeys = this.getMandatory();
-		this.parse(mandatoryKeys, source, parsed, cascade, mandatory);
+		for (Structure structure : structures)
+		{
+			this.parse(structure.getKeys(), source, parsed, cascade, structure.getValues());
+			structure.process(this, source, parsed, cascade);
+		}
 
-		for (Key key : mandatoryKeys)
-			if (!parsed.contains(key.getKey()))
-				throw new JSONParsingException(this, "Missing mandatory key: "+ key.getKey());
-
-		this.parse(this.getOptional(), source, parsed, cascade, optional);
-
-		//Save values for cascade
-		cascade.putAll(optional);
-
-		//Retrieve values from cascade
-		for (Key k : this.getCascadeKeys())
-			if (!optional.containsKey(k) && cascade.containsKey(k))
-				optional.put(k, cascade.get(k));
-
-		Set<String> keys = source.keySet();
+		Set<String> keys = new HashSet<>(source.keySet());
 		keys.removeAll(parsed);
 
 		if (!keys.isEmpty())
 			throw new JSONParsingException(this, '\''+ String.join("', '", keys) +"' are invalid children for '"+ this.getKey() +'\'');
 
-		try { return this.build(mandatory, optional); }
+		try { return this.build(structures); }
 		catch (JSONParsingException e) { throw new JSONParsingException(this, e); }
 		catch (Exception e) { throw new JSONParsingException(this, e); }
 	}
 
+	/**
+	 * Inner parsing process, use {@link ObjectKey#parse(JSONObject)} or {@link ObjectKey#parse(Map, JSONObject)} instead
+	 * @param keys the requested keys
+	 * @param source the parsed object's source
+	 * @param parsed a set of parsed key names
+	 * @param cascade the cascade
+	 * @param values a map of parsed key values
+	 * @throws JSONParsingException
+	 */
 	@SuppressWarnings("unchecked")
 	default void parse(List<Key> keys, JSONObject source, Set<String> parsed, Map<Key, Object> cascade, Map<Key, Object> values) throws JSONParsingException
 	{
@@ -104,11 +83,8 @@ public interface ObjectKey<T> extends Key<JSONObject, T>
 				{
 					try
 					{
-						if (k.isObjectArrayKey())
-							k.asObjectArrayKey().setCascade(new HashMap<>(cascade));
-
-						if (k.isObjectKey())
-							values.put(k, k.asObjectKey().parse(new HashMap<>(cascade), source.getJSONObject(k.getKey())));
+						if (k.isCascadingKey())
+							values.put(k, k.asCascadingKey().parse(cascade, source.get(k.getKey())));
 						else
 							values.put(k, k.parse(source.get(k.getKey())));
 
@@ -121,24 +97,25 @@ public interface ObjectKey<T> extends Key<JSONObject, T>
 	}
 
 	/**
-	 * Get a {@linkplain List} of keys that are required to build a T object
-	 * @return a {@literal List<Key>}
+	 * Get a {@linkplain List} of structures which define how the keys within this compound should be used.
+	 * @return a {@literal List<Structure>}
 	 */
-	List<Key> getMandatory();
+	List<Structure> getStructures();
 
 	/**
-	 * Get a {@linkplain List} of keys that provide additional but non-necessary informations on the T object.
-	 * This may be used to compute necessary keys at runtime [for instance either two of three keys, and such]
-	 * @return a {@literal List<Key>}
+	 * @return a {@link List} of keys registered for the cascade
+	 * @see Structure#isCascading()
 	 */
-	List<Key> getOptional();
+	default List<Key> getCascadeKeys()
+	{
+		final ArrayList<Key> cascading = new ArrayList<>();
 
-	/**
-	 * Register keys for cascade values: if the optional key is missing it will be replaced by the previous computed cascade value.
-	 * You may only register optional keys.
-	 * @return a {@link List}
-	 */
-	default List<Key> getCascadeKeys() { return this.getOptional(); }
+		for (Structure structure : this.getStructures())
+			if (structure.isCascading())
+				cascading.addAll(structure.getKeys());
+
+		return cascading;
+	}
 
 	@Override default boolean isObjectKey() { return true; }
 	@Override default ObjectKey<T> asObjectKey() { return this; }

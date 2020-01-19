@@ -1,7 +1,6 @@
 package fr.az.util.parsing.json.keys.commons.array;
 
 import fr.az.util.parsing.IParser;
-import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
 
 public class SimpleArrayKey<E, O> extends AbstractArrayKey<E, O>
@@ -19,18 +18,6 @@ public class SimpleArrayKey<E, O> extends AbstractArrayKey<E, O>
 		this.parser = parser;
 	}
 
-	@Override
-	public O parseSingle(E input) throws JSONParsingException
-	{
-		try
-		{
-			return this.parser.parse(input);
-		}
-		catch (Throwable t)
-		{
-			throw new JSONParsingException(this, "Could not parse '"+ input +"': "+ t.getClass().getSimpleName() +": "+ t.getMessage());
-		}
-	}
-
+	@Override public IParser<E, O, ?> getElementParser() { return this.parser; }
 	@Override public String getKey() { return this.name; }
 }

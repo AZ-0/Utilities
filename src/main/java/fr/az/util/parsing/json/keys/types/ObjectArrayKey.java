@@ -1,13 +1,13 @@
 package fr.az.util.parsing.json.keys.types;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
-import fr.az.util.parsing.json.keys.Key;
+import fr.az.util.parsing.json.keys.structure.Structure;
 import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
 
 /**
@@ -16,8 +16,7 @@ import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
  * @see ObjectKey
  * @param <T> the object built by a single JSONObject
  */
-@SuppressWarnings({ "rawtypes" })
-public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T>
+public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T> implements CascadingKey<JSONArray, List<T>>
 {
 	private static final long serialVersionUID = 9204202544208385246L;
 
@@ -26,18 +25,15 @@ public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T>
 		private static final long serialVersionUID = 8862878584229594393L;
 
 		@Override
-		public T build(Map<Key, Object> mandatory, Map<Key, Object> optional) throws JSONParsingException
+		public T build(List<Structure> structures) throws JSONParsingException
 		{
-			return ObjectArrayKey.this.build(mandatory, optional);
+			return ObjectArrayKey.this.build(structures);
 		}
 
-		@Override public List<Key> getMandatory() { return ObjectArrayKey.this.getMandatory(); }
-		@Override public List<Key> getOptional() { return ObjectArrayKey.this.getOptional(); }
+		@Override public List<Structure> getStructures() { return ObjectArrayKey.this.getStructures(); }
 		@Override public String getKey() { return ObjectArrayKey.this.getKey(); }
 		@Override public String toString() { return ObjectArrayKey.this.toString(); }
 	};
-
-	private Map<Key, Object> cascade = new HashMap<>();
 
 	/**
 	 * Build a T object with a {@linkplain Map}
@@ -45,30 +41,15 @@ public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T>
 	 * @see ObjectKey#build(Map)
 	 * @return T
 	 */
-	public abstract T build(Map<Key, Object> mandatory, Map<Key, Object> optional) throws JSONParsingException;
+	public abstract T build(List<Structure> structures) throws JSONParsingException;
+
+	public ObjectKey<T> getParser() { return this.parser; }
 
 	/**
-	 * Parse a single T object instanciating a new temporary {@linkplain ObjectKey}
+	 * @see ObjectKey#getStructures()
+	 * @return a {@literal List<Structure>}
 	 */
-	@Override
-	public T parseSingle(JSONObject obj) throws JSONParsingException
-	{
-		return this.parser.parse(this.cascade, obj);
-	}
-
-	void setCascade(Map<Key, Object> cascade) { this.cascade = cascade; }
-
-	/**
-	 * @see ObjectKey#getMandatory()
-	 * @return a {@literal List<Key>}
-	 */
-	public abstract List<Key> getMandatory();
-
-	/**
-	 * @see ObjectKey#getOptional()
-	 * @return a {@literal List<Key>}
-	 */
-	public abstract List<Key> getOptional();
+	public abstract List<Structure> getStructures();
 
 	@Override public boolean isObjectArrayKey() { return true; }
 	@Override public ObjectArrayKey<T> asObjectArrayKey() { return this; }

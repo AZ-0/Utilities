@@ -30,7 +30,7 @@ public class JSONParsingException extends ParsingException
 	public JSONParsingException(Key<?,?> at, String reason) {
 		this(at, reason, at.toString()); }
 
-	public JSONParsingException(Key<?, ?> at, Exception child)
+	public JSONParsingException(Key<?, ?> at, Throwable child)
 	{
 		this(at, child.getMessage(), at.toString());
 		child.printStackTrace();

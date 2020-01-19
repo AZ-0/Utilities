@@ -3,9 +3,11 @@ package fr.az.util.parsing.json.keys.types;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 
+import fr.az.util.parsing.IParser;
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.Key;
 
@@ -16,7 +18,7 @@ import fr.az.util.parsing.json.keys.Key;
  * @param <E> Array's elements input type
  * @param <O> Output type
  */
-public interface ArrayKey<E, O> extends Key<JSONArray, List<O>>
+public interface ArrayKey<E, O> extends CascadingKey<JSONArray, List<O>>
 {
 	/**
 	 * Parse a JSONArray containing any number of O objects.
@@ -27,29 +29,36 @@ public interface ArrayKey<E, O> extends Key<JSONArray, List<O>>
 	 * @throws JSONParsingException
 	 * @see ArrayKey#parse(Object)
 	 */
-	@Override @SuppressWarnings({ "unchecked" })
-	default List<O> parse(JSONArray array) throws JSONParsingException
+	@Override @SuppressWarnings({ "unchecked", "rawtypes" })
+	default List<O> parse(Map<Key, Object> cascade, JSONArray array) throws JSONParsingException
 	{
 		List<O> list = new ArrayList<>();
 
 		for (int i = 0; i < array.length(); i++)
 		{
 			AbstractArrayKey.ITERATIONS.put(this, i);
-			try { list.add(this.parseSingle((E) array.get(i))); }
+			try
+			{
+				IParser<E, O, ?> parser = this.getElementParser();
+
+				if (parser instanceof CascadingKey)
+					list.add(((CascadingKey<E, O>) parser).parse(cascade, (E) array.get(i)));
+				else
+					list.add(parser.parse((E) array.get(i)));
+			}
 			catch (JSONParsingException e) { throw e; }
-			catch (Exception e) { throw new JSONParsingException(this, e); }
+			catch (Throwable t) { throw new JSONParsingException(this, t); }
 		}
 
 		return list;
 	}
 
+
 	/**
-	 * Parse a single I element of the array into a O object
-	 * @param an I input
-	 * @return an O object
-	 * @throws JSONParsingException if syntax or semantic is incorrect
+	 * Get a {@linkplain IParser} parsing for every single I element of the array into a O object
+	 * @return a IParser
 	 */
-	O parseSingle(E input) throws JSONParsingException;
+	IParser<E, O, ?> getElementParser();
 
 	@Override default boolean isArrayKey() { return true; }
 	@Override default ArrayKey<E, O> asArrayKey() { return this; }

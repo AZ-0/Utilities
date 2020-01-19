@@ -3,6 +3,7 @@ package fr.az.util.parsing.json.keys;
 import fr.az.util.parsing.IParser;
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.types.ArrayKey;
+import fr.az.util.parsing.json.keys.types.CascadingKey;
 import fr.az.util.parsing.json.keys.types.ObjectArrayKey;
 import fr.az.util.parsing.json.keys.types.ObjectKey;
 
@@ -32,10 +33,12 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	 */
 	String getKey();
 
+	default boolean isCascadingKey() { return false; }
 	default boolean isObjectKey() { return false; }
 	default boolean isArrayKey() { return false; }
 	default boolean isObjectArrayKey() { return false; }
 
+	default CascadingKey<I, O> asCascadingKey() { return null; }
 	default ObjectKey<O> asObjectKey() { return null; }
 	default ArrayKey<?, ?> asArrayKey() { return null; }
 	default ObjectArrayKey<?> asObjectArrayKey() { return null; }

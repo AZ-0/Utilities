@@ -1,13 +1,15 @@
 package fr.az.util.parsing.json.keys.types;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.Key;
+import fr.az.util.parsing.json.keys.structure.NKeysFromList;
+import fr.az.util.parsing.json.keys.structure.Structure;
 
 /**
  * You use this class when you want your key to contain one and only one key from a list, for instance in the case there are multiple
@@ -16,28 +18,17 @@ import fr.az.util.parsing.json.keys.Key;
  *
  * @param <T> the constructed type
  */
-@SuppressWarnings("rawtypes")
 public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 {
 	List<Key<?, ? extends T>> getKeys();
 
 	@Override @SuppressWarnings("unchecked")
-	default T build(Map<Key, Object> mandatory, Map<Key, Object> optional) throws JSONParsingException
+	default T build(List<Structure> structures) throws JSONParsingException
 	{
-		List<Key<?, ? extends T>> keys = this.getKeys();
-
-		if (optional.size() != 1)
-			throw new JSONParsingException(this, "Expected exactly one key from this list: " + keys);
-
-		for (Key<?, ? extends T> key : keys)
-			if (optional.containsKey(key))
-				return (T) optional.get(key);
-
-		throw new JSONParsingException(this, "Missing one key from this list: " + keys);
+		return (T) structures.get(0).getValues().values().stream().findAny().get();
 	}
 
-	@Override default List<Key> getMandatory() { return EMPTY_KEY_LIST; }
-	@Override default List<Key> getOptional() { return new ArrayList<>(this.getKeys()); }
+	@Override default List<Structure> getStructures() { return Arrays.asList(new NKeysFromList(1, new ArrayList<>(this.getKeys()))); }
 
 	public static abstract class AbstractOnlyOneObjectKey<T> extends AbstractKey<JSONObject, T> implements OnlyOneObjectKey<T>
 	{
@@ -47,18 +38,12 @@ public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 
 		public AbstractOnlyOneObjectKey(List<Key<?, ? extends T>> keys)
 		{
-			if (keys == null)
-				System.err.println("NULL KEYS: "+ this.getKey());
-
 			this.keys = keys;
 		}
 
 		@Override
 		public List<Key<?, ? extends T>> getKeys()
 		{
-			if (this.keys == null)
-				System.err.println("RETURNING NULL KEYS: "+ this.getKey());
-
 			return this.keys;
 		}
 	}
