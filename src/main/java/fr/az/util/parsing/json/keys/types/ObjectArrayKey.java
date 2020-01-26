@@ -43,7 +43,8 @@ public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T> 
 	 */
 	public abstract T build(List<Structure> structures) throws JSONParsingException;
 
-	public ObjectKey<T> getParser() { return this.parser; }
+	@Override
+	public ObjectKey<T> getElementParser() { return this.parser; }
 
 	/**
 	 * @see ObjectKey#getStructures()
