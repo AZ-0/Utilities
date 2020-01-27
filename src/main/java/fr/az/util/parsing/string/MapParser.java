@@ -61,12 +61,12 @@ public class MapParser<K, V> implements Parser<Map<K, V>>
 		{
 			for (String couple : couples)
 			{
-				Tuple2<K, V> parsed = this.parseCouple(couple);
-				map.put(parsed.a, parsed.b);
+				extractor = COUPLE_ELEMENT.matcher(couple);
+				map.put(this.parseKey(Regex.unquote(extractor.group("key"))), this.parseValue(Regex.unquote(extractor.group("value"))));
 			}
 		}
 		catch (ParsingException e) {
-			throw new ParsingException("In "+ Regex.quote(from) +": "+ e.getMessage()); }
+			throw new ParsingException("in "+ Regex.quote(from) +": "+ e.getMessage()); }
 
 		return map;
 	}

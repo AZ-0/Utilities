@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 /**
- * The basic definition of a parser. It actually resembles Function for a good reason
+ * The basic definition of a parser. It extends <code>Function{@literal <I,O>}</code>
  * @author A~Z
  *
  * @param <I> the input value type
@@ -22,9 +22,9 @@ public interface IParser<I, O, T extends Throwable> extends Function<I, O>, Seri
 	O parse(I from) throws T;
 
 	/**
-	 * This method tries to parse an I into an O but silently fails in the case an exception occurs.
+	 * This method tries to parse an I into an O but only prints the stack trace in the case an exception occurs.
 	 * @return the parsed O, or null if an exception occured
 	 */
 	@Override
-	default O apply(I from) { try { return this.parse(from); } catch(Throwable t) { return null; } }
+	default O apply(I from) { try { return this.parse(from); } catch(Throwable t) { t.printStackTrace(); return null; } }
 }

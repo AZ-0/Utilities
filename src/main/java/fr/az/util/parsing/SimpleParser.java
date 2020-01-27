@@ -25,5 +25,5 @@ public interface SimpleParser<O, P extends ParsingException> extends IParser<Par
 	O parse(String from) throws P;
 
 	/** @return an {@linkplain IParser} parsing String into I */
-	default IParser<String, O, P> asStringParser() { return (s) -> this.parse(s); }
+	default IParser<String, O, P> asStringParser() { return s -> this.parse(s); }
 }
