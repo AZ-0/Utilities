@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.Key;
-import fr.az.util.parsing.json.keys.structure.NKeysFromList;
+import fr.az.util.parsing.json.keys.structure.OnlyNKeys;
 import fr.az.util.parsing.json.keys.structure.Structure;
 
 /**
@@ -28,7 +28,7 @@ public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 		return (T) structures.get(0).getValues().values().stream().findAny().get();
 	}
 
-	@Override default List<Structure> getStructures() { return Arrays.asList(new NKeysFromList(1, new ArrayList<>(this.getKeys()))); }
+	@Override default List<Structure> getStructures() { return Arrays.asList(new OnlyNKeys(1, new ArrayList<>(this.getKeys()))); }
 
 	public static abstract class AbstractOnlyOneObjectKey<T> extends AbstractKey<JSONObject, T> implements OnlyOneObjectKey<T>
 	{

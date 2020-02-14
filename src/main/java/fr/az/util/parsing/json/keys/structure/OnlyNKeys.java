@@ -11,7 +11,7 @@ import fr.az.util.parsing.json.keys.Key;
 import fr.az.util.parsing.json.keys.types.ObjectKey;
 
 @SuppressWarnings("rawtypes")
-public class NKeysFromList extends Structure
+public class OnlyNKeys extends Structure
 {
 	private static final long serialVersionUID = 8460630789280452249L;
 
@@ -22,13 +22,13 @@ public class NKeysFromList extends Structure
 		this.updateErrorMessage();
 	}
 
-	public NKeysFromList(int amount, Key... keys)
+	public OnlyNKeys(int amount, Key... keys)
 	{
 		super(keys);
 		this.amount = amount;
 	}
 
-	public NKeysFromList(int amount, Collection<Key> keys)
+	public OnlyNKeys(int amount, Collection<Key> keys)
 	{
 		super(keys);
 		this.amount = amount;
