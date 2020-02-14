@@ -9,18 +9,18 @@ A simple project with reusable tools.
 #### String parsing
 This repository contains a String parsing api, featuring:
  - rawtypes
-	• number based rawtypes : min/max support
-	• char : expected chars support
+	- number based rawtypes : min/max support
+	- char : expected chars support
  - String : regular expressions support
  - Number : min/max support
  - List : support depends on the element's type
  - Map : support varies on the key/value's type
  - Deep list
-	• parse a list, and all maps and lists inside
-	• no type support, all non-map and non-list elements are stored as String, and require further parsing
+	- parse a list, and all maps and lists inside
+	- no type support, all non-map and non-list elements are stored as String, and require further parsing
  - Deep map
-	• parse a map, and all maps and lists inside
-	• no type support, all non-map and non-list elements are stored as String, and require further parsing
+	- parse a map, and all maps and lists inside
+	- no type support, all non-map and non-list elements are stored as String, and require further parsing
 
 The [Parser](/src/main/java/fr/az/util/parsing/string/Parser.java "Parser source code") class possess the simple minimal
 definitions of the aforementioned parsers instanciated.
