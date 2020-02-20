@@ -27,10 +27,10 @@ public class NumberParser<N extends Number> implements Parser<N>
 		{
 			N number = this.parser.parse(from);
 
-			if (number.doubleValue() < this.min.doubleValue())
+			if (this.min != null && number.doubleValue() < this.min.doubleValue())
 				throw Parser.produceException("The number '"+ INPUT +"' should be lesser than "+ this.min, from);
 
-			if (number.doubleValue() > this.max.doubleValue())
+			if (this.max != null && number.doubleValue() > this.max.doubleValue())
 				throw Parser.produceException("The number '"+ INPUT +"' should be greater than "+ this.max, from);
 
 			return number;

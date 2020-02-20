@@ -2,8 +2,30 @@ plugins {
 	id 'java'
 	id 'eclipse'
 	id 'idea'
+	id 'maven-publish'
 }
 
+//PACKAGE
+publishing {
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/az-0/Utilities")
+			credentials {
+				username = System.getenv("GIT_USERNAME")
+				password = System.getenv("GIT_TOKEN")
+			}
+		}
+	}
+	
+	publications {
+		gpr(MavenPublication) {
+			from(components.java)
+		}
+	}
+}
+
+//BUILD
 group = 'fr.az.util'
 version = '1.0'
 
