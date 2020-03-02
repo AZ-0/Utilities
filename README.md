@@ -3,6 +3,21 @@ A simple project with reusable tools.
 
 ## General Informations
  - Java version : 1.8
+ - Latest version : 1.0
+
+### Gradle
+If you want to use this api in your project, you should add some code in your `build.gradle` file.
+```gradle
+repositories {
+	//Declare this api's repository
+	maven { url = uri('https://maven.pkg.github.com/az-0/Utilities') }
+}
+
+dependencies {
+	//Declare the api as a dependency for your project
+	implementation 'fr.az.util:Utilities:<VERSION>'
+}
+```
 
 ## Contents
 ### Parsing API
@@ -10,11 +25,12 @@ A simple project with reusable tools.
 This repository contains a String parsing api, featuring:
  - rawtypes
 	- number based rawtypes : min/max support
-	- char : expected chars support
+	- char : simple char parsing
  - String : regular expressions support
  - Number : min/max support
- - List : support depends on the element's type
- - Map : support varies on the key/value's type
+ - List : parse a list \[element 1, "element 2", ..., element N], and has support from element's type 
+ - Map : parse a map {key 1: value 1, "key 2" = value2, "key N = foo" = "value N: bar"}, and has support from element's type
+> Using quotes `"` around an element in a list or a map will ensure the element integrity. Else, the spaces surrounding it may get trimmed, and a special character could cause the parsing to fail. However, using quotes means you have to escape special characters inside the element with an antislash `\`.
  - Deep list
 	- parse a list, and all maps and lists inside
 	- no type support, all non-map and non-list elements are stored as String, and require further parsing
