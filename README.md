@@ -38,10 +38,10 @@ This repository contains a String parsing api, featuring:
 	- parse a map, and all maps and lists inside
 	- no type support, all non-map and non-list elements are stored as String, and require further parsing
 
-The [Parser](/src/main/java/fr/az/util/parsing/string/Parser.java "Parser source code") class possess the simple minimal
+The [Parser](/src/main/java/fr/az/util/parsing/string/Parser.java "Parser source code") interface possess the simple minimal
 definitions of the aforementioned parsers instanciated.
 
 #### JSON parsing
 This repository contains a JSON parsing api, based on [org.json](https://mvnrepository.com/artifact/org.json/json "Maven repository for org.json")
 It intends to constructs Objects from json in a simple manner, with classes daughters of
-[Key](/src/main/java/fr/az/util/parsing/json/keys/Key.java "Key source code") as parsers of a field in a class.
+[Key](/src/main/java/fr/az/util/parsing/json/keys/Key.java "Key source code") as parsers of a field in a class. See the documentation of said classes for more informations.
