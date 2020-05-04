@@ -36,26 +36,19 @@ tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
 
 configurations { extraLibs }
 
-jar
-{
-	doFirst
-	{
+jar {
+	doFirst {
 		from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
 		from sourceSets.main.allSource
 	}
 }
 
-repositories
-{
+repositories {
 	jcenter()
 }
 
-dependencies
-{
-	implementation 'org.apache.commons:commons-math3:3.6.1'
-	
+dependencies {
 	configurations.compile.extendsFrom(configurations.extraLibs)
-	extraLibs 'org.apache.commons:commons-dbcp2:2.6.0'
 	extraLibs 'org.json:json:20180813'
 }
 
@@ -64,5 +57,4 @@ task runPython(type:Exec) {
    commandLine 'py', 'script_move.py', 'Utilities', version
 }
 
-//compileJava.source(sourceSets.main.java)
 build.finalizedBy(runPython)
