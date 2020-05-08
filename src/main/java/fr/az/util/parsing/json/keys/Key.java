@@ -1,7 +1,10 @@
 package fr.az.util.parsing.json.keys;
 
+import java.util.function.Supplier;
+
 import fr.az.util.parsing.IParser;
 import fr.az.util.parsing.json.JSONParsingException;
+import fr.az.util.parsing.json.keys.structure.Structure;
 import fr.az.util.parsing.json.keys.types.ArrayKey;
 import fr.az.util.parsing.json.keys.types.CascadingKey;
 import fr.az.util.parsing.json.keys.types.ObjectArrayKey;
@@ -32,6 +35,22 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	 * @return this key name, should be a constant
 	 */
 	String getKey();
+
+	@SuppressWarnings("unchecked")
+	default O get(Structure from)
+	{
+		return (O) from.getValues().get(this);
+	}
+
+	default O get(Structure from, O byDefault) { return this.get(from, () -> byDefault); }
+
+	default O get(Structure from, Supplier<O> byDefault)
+	{
+		O value = this.get(from);
+
+		return value == null ? byDefault.get() : value;
+	}
+
 
 	default boolean isCascadingKey() { return false; }
 	default boolean isObjectKey() { return false; }
