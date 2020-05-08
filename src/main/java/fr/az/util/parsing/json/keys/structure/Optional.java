@@ -1,5 +1,6 @@
 package fr.az.util.parsing.json.keys.structure;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -15,8 +16,30 @@ public class Optional extends Structure
 {
 	private static final long serialVersionUID = 6380392168153293796L;
 
-	public Optional(Key... keys) { super(keys); }
-	public Optional(Collection<Key> keys) { super(keys); }
+	private boolean fillCascade;
+	private boolean retrieveCascade;
+
+	public Optional(Key... keys)
+	{
+		this(true, true, keys);
+	}
+
+	public Optional(Collection<Key> keys)
+	{
+		this(true, true, keys);
+	}
+
+	public Optional(boolean fillCascade, boolean retrieveCascade, Key... keys)
+	{
+		this(fillCascade, retrieveCascade, Arrays.asList(keys));
+	}
+
+	public Optional(boolean fillCascade, boolean retrieveCascade, Collection<Key> keys)
+	{
+		super(keys);
+		this.fillCascade = fillCascade;
+		this.retrieveCascade = retrieveCascade;
+	}
 
 	@Override
 	public void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException
@@ -24,11 +47,13 @@ public class Optional extends Structure
 		Map<Key, Object> values = this.getValues();
 
 		//Save values for cascade
-		cascade.putAll(values);
+		if (this.fillCascade)
+			cascade.putAll(values);
 
 		//Retrieve values from cascade
-		for (Key k : parser.getCascadeKeys())
-			if (!values.containsKey(k) && cascade.containsKey(k))
-				values.put(k, cascade.get(k));
+		if (this.retrieveCascade)
+			for (Key k : parser.getCascadeKeys())
+				if (cascade.containsKey(k))
+					values.putIfAbsent(k, cascade.get(k));
 	}
 }
