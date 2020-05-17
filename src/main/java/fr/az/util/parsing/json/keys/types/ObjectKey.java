@@ -45,7 +45,7 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	@Override
 	default T parse(Map<Key, Object> cascade, JSONObject source) throws JSONParsingException
 	{
-		List<Structure> structures = this.getStructures();
+		List<Structure> structures = new ArrayList<>(this.getStructures()); //Ensure the original list isn't modified
 		Set<String> parsed = new HashSet<>();
 
 		for (Structure structure : structures)
