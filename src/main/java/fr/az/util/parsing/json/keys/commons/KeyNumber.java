@@ -15,7 +15,7 @@ public abstract class KeyNumber<N extends Number> implements Key<Number, N>
 	private static final long serialVersionUID = -8207801395969223443L;
 	public static final String DEFAULT_NAME = "value";
 
-	public static final KeyNumber<Number> KEY = new KeyNumber<>()
+	public static final KeyNumber<Number> KEY = new KeyNumber<Number>()
 	{
 		private static final long serialVersionUID = 4201375031782760665L;
 
