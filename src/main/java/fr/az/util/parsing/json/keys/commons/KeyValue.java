@@ -1,6 +1,6 @@
 package fr.az.util.parsing.json.keys.commons;
 
-import fr.az.util.parsing.json.keys.Key.AbstractKey;
+import fr.az.util.parsing.json.keys.Key;
 
 /**
  * A mother class for very simples types, such as raw types or {@linkplain String}.
@@ -10,7 +10,7 @@ import fr.az.util.parsing.json.keys.Key.AbstractKey;
  *
  * @param <T> an {@linkplain Object} type
  */
-public class KeyValue<T extends Object> extends AbstractKey<T, T>
+public class KeyValue<T extends Object> implements Key<T, T>
 {
 	private static final long serialVersionUID = 6047427904199278229L;
 

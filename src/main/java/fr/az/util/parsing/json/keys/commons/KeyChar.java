@@ -1,9 +1,9 @@
 package fr.az.util.parsing.json.keys.commons;
 
 import fr.az.util.parsing.json.JSONParsingException;
-import fr.az.util.parsing.json.keys.Key.AbstractKey;
+import fr.az.util.parsing.json.keys.Key;
 
-public class KeyChar extends AbstractKey<String, Character>
+public class KeyChar implements Key<String, Character>
 {
 	private static final long serialVersionUID = 676471801691367854L;
 

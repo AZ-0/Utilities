@@ -4,9 +4,9 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import fr.az.util.parsing.json.JSONParsingException;
-import fr.az.util.parsing.json.keys.Key.AbstractKey;
+import fr.az.util.parsing.json.keys.Key;
 
-public class KeyString extends AbstractKey<String, String>
+public class KeyString implements Key<String, String>
 {
 	private static final long serialVersionUID = 2114108507097938539L;
 	private static final Pattern DEFAULT_PATTERN = Pattern.compile(".*");

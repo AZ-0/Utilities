@@ -1,7 +1,7 @@
 package fr.az.util.parsing.json.keys.commons;
 
 import fr.az.util.parsing.json.JSONParsingException;
-import fr.az.util.parsing.json.keys.Key.AbstractKey;
+import fr.az.util.parsing.json.keys.Key;
 
 /**
  * Essentially the same as {@linkplain KeyValue} for {@linkplain Number} based class, but use the {@literal Number#<rawType>Value} method
@@ -10,12 +10,12 @@ import fr.az.util.parsing.json.keys.Key.AbstractKey;
  *
  * @param <N> a Number class
  */
-public abstract class KeyNumber<N extends Number> extends AbstractKey<Number, N>
+public abstract class KeyNumber<N extends Number> implements Key<Number, N>
 {
 	private static final long serialVersionUID = -8207801395969223443L;
 	public static final String DEFAULT_NAME = "value";
 
-	public static final KeyNumber<Number> KEY = new KeyNumber<Number>()
+	public static final KeyNumber<Number> KEY = new KeyNumber<>()
 	{
 		private static final long serialVersionUID = 4201375031782760665L;
 

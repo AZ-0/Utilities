@@ -8,7 +8,6 @@ import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.structure.Structure;
-import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
 
 /**
  * Parse an array of {@linkplain JSONObject}
@@ -16,11 +15,11 @@ import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
  * @see ObjectKey
  * @param <T> the object built by a single JSONObject
  */
-public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T> implements CascadingKey<JSONArray, List<T>>
+public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>, CascadingKey<JSONArray, List<T>>
 {
 	private static final long serialVersionUID = 9204202544208385246L;
 
-	private final ObjectKey<T> parser = new ObjectKey<T>()
+	private final ObjectKey<T> parser = new ObjectKey<>()
 	{
 		private static final long serialVersionUID = 8862878584229594393L;
 
@@ -43,15 +42,13 @@ public abstract class ObjectArrayKey<T> extends AbstractArrayKey<JSONObject, T> 
 	 */
 	public abstract T build(List<Structure> structures) throws JSONParsingException;
 
-	@Override
-	public ObjectKey<T> getElementParser() { return this.parser; }
-
 	/**
 	 * @see ObjectKey#getStructures()
 	 * @return a {@literal List<Structure>}
 	 */
 	public abstract List<Structure> getStructures();
 
+	@Override public ObjectKey<T> getElementParser() { return this.parser; }
 	@Override public boolean isObjectArrayKey() { return true; }
 	@Override public ObjectArrayKey<T> asObjectArrayKey() { return this; }
 }

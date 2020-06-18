@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.json.JSONObject;
-
 import fr.az.util.parsing.json.JSONParsingException;
 import fr.az.util.parsing.json.keys.Key;
 import fr.az.util.parsing.json.keys.structure.OnlyNKeys;
@@ -29,22 +27,4 @@ public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 	}
 
 	@Override default List<Structure> getStructures() { return Arrays.asList(new OnlyNKeys(1, new ArrayList<>(this.getKeys()))); }
-
-	public static abstract class AbstractOnlyOneObjectKey<T> extends AbstractKey<JSONObject, T> implements OnlyOneObjectKey<T>
-	{
-		private static final long serialVersionUID = -4139221444552396268L;
-
-		private final List<Key<?, ? extends T>> keys;
-
-		public AbstractOnlyOneObjectKey(List<Key<?, ? extends T>> keys)
-		{
-			this.keys = keys;
-		}
-
-		@Override
-		public List<Key<?, ? extends T>> getKeys()
-		{
-			return this.keys;
-		}
-	}
 }

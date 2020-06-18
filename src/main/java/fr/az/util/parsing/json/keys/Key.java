@@ -1,5 +1,6 @@
 package fr.az.util.parsing.json.keys;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import fr.az.util.parsing.IParser;
@@ -42,15 +43,23 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 		return (O) from.getValues().get(this);
 	}
 
-	default O get(Structure from, O byDefault) { return this.get(from, () -> byDefault); }
+	default O opt(Structure from, O byDefault)			 { return this.opt(from).orElse(byDefault); }
+	default O opt(Structure from, Supplier<O> byDefault) { return this.opt(from).orElseGet(byDefault); }
 
-	default O get(Structure from, Supplier<O> byDefault)
+	@SuppressWarnings("unchecked")
+	default Optional<O> opt(Structure from)
 	{
-		O value = this.get(from);
+		Object obj = from.getValues().get(this);
 
-		return value == null ? byDefault.get() : value;
+		try
+		{
+			O value = (O) obj;
+			return Optional.ofNullable(value);
+		} catch (ClassCastException e)
+		{
+			return Optional.empty();
+		}
 	}
-
 
 	default boolean isCascadingKey() { return false; }
 	default boolean isObjectKey() { return false; }
@@ -61,11 +70,4 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	default ObjectKey<O> asObjectKey() { return null; }
 	default ArrayKey<?, ?> asArrayKey() { return null; }
 	default ObjectArrayKey<?> asObjectArrayKey() { return null; }
-
-	public static abstract class AbstractKey<I, O> implements Key<I, O>
-	{
-		private static final long serialVersionUID = -7165844987966510743L;
-
-		@Override public String toString() { return this.getKey(); }
-	}
 }

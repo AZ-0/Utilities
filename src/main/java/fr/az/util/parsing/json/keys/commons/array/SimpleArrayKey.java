@@ -1,9 +1,9 @@
 package fr.az.util.parsing.json.keys.commons.array;
 
 import fr.az.util.parsing.IParser;
-import fr.az.util.parsing.json.keys.types.ArrayKey.AbstractArrayKey;
+import fr.az.util.parsing.json.keys.types.ArrayKey;
 
-public class SimpleArrayKey<E, O> extends AbstractArrayKey<E, O>
+public class SimpleArrayKey<E, O> implements ArrayKey<E, O>
 {
 	private static final long serialVersionUID = 5609020547991672229L;
 
