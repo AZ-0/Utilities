@@ -30,10 +30,10 @@ public class JSONParsingException extends ParsingException
 	public JSONParsingException(Key<?,?> at, String reason) {
 		this(at, reason, at.trace()); }
 
-	public JSONParsingException(Key<?, ?> at, Throwable child)
+	public JSONParsingException(Key<?, ?> at, Throwable source)
 	{
-		this(at, child.getMessage(), at.trace());
-		child.printStackTrace();
+		this(at, source.getMessage(), at.trace());
+		source.printStackTrace();
 	}
 
 	/**
@@ -41,9 +41,9 @@ public class JSONParsingException extends ParsingException
 	 * @param at the new root of the trace
 	 * @param child a JSONMalformatedException which trace will be completed with the new root and reason conserved
 	 */
-	public JSONParsingException(Key<?,?> at, JSONParsingException child)
+	public JSONParsingException(Key<?,?> at, JSONParsingException source)
 	{
-		this(at, child.getMessage(), at.trace() +'.'+ child.getTrace());
+		this(at, source.getMessage(), at.trace() +'.'+ source.trace());
 	}
 
 	private JSONParsingException(Key<?,?> at, String reason, String trace)
@@ -64,5 +64,5 @@ public class JSONParsingException extends ParsingException
 	/**
 	 * @return the exception trace, in the format of a JSONPointer
 	 */
-	public String getTrace() { return this.trace; }
+	public String trace() { return this.trace; }
 }
