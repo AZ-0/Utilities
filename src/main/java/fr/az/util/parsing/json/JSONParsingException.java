@@ -28,11 +28,11 @@ public class JSONParsingException extends ParsingException
 	 * @param reason the reason this exception was thrown
 	 */
 	public JSONParsingException(Key<?,?> at, String reason) {
-		this(at, reason, at.toString()); }
+		this(at, reason, at.trace()); }
 
 	public JSONParsingException(Key<?, ?> at, Throwable child)
 	{
-		this(at, child.getMessage(), at.toString());
+		this(at, child.getMessage(), at.trace());
 		child.printStackTrace();
 	}
 
@@ -43,9 +43,8 @@ public class JSONParsingException extends ParsingException
 	 */
 	public JSONParsingException(Key<?,?> at, JSONParsingException child)
 	{
-		this(at, child.getMessage(), at.toString() +'.'+ child.getTrace());
+		this(at, child.getMessage(), at.trace() +'.'+ child.getTrace());
 	}
-
 
 	private JSONParsingException(Key<?,?> at, String reason, String trace)
 	{
@@ -53,6 +52,8 @@ public class JSONParsingException extends ParsingException
 		this.key = at;
 		this.trace = trace;
 	}
+
+	@Override public Throwable fillInStackTrace() { return this; }
 
 	/**
 	 * @see JSONParsingException#getTrace()
