@@ -24,7 +24,7 @@ public class Optional extends Structure
 		this(true, true, keys);
 	}
 
-	public Optional(Collection<Key> keys)
+	public Optional(Collection<? extends Key> keys)
 	{
 		this(true, true, keys);
 	}
@@ -34,7 +34,7 @@ public class Optional extends Structure
 		this(fillCascade, retrieveCascade, Arrays.asList(keys));
 	}
 
-	public Optional(boolean fillCascade, boolean retrieveCascade, Collection<Key> keys)
+	public Optional(boolean fillCascade, boolean retrieveCascade, Collection<? extends Key> keys)
 	{
 		super(keys);
 		this.fillCascade = fillCascade;

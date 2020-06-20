@@ -30,7 +30,7 @@ public abstract class Structure implements Serializable
 		this.keys = Arrays.asList(keys);
 	}
 
-	public Structure(Collection<Key> keys)
+	public Structure(Collection<? extends Key> keys)
 	{
 		this.keys = Collections.unmodifiableList(new ArrayList<>(keys));
 	}

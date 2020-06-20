@@ -16,7 +16,7 @@ public class Mandatory extends Structure
 	private static final long serialVersionUID = 6286436828362666538L;
 
 	public Mandatory(Key... keys) { super(keys); }
-	public Mandatory(Collection<Key> keys) { super(keys); }
+	public Mandatory(Collection<? extends Key> keys) { super(keys); }
 
 	@Override
 	public void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException
