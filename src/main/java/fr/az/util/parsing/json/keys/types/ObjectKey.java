@@ -50,7 +50,8 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 
 		for (Structure structure : structures)
 		{
-			this.parse(structure.getKeys(), source, parsed, cascade, structure.getValues());
+			structure.clear();
+			this.parse(structure.keys(), source, parsed, cascade, structure.values());
 			structure.process(this, source, parsed, cascade);
 		}
 
@@ -108,11 +109,11 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	 */
 	default List<Key> getCascadeKeys()
 	{
-		final ArrayList<Key> cascading = new ArrayList<>();
+		List<Key> cascading = new ArrayList<>();
 
 		for (Structure structure : this.getStructures())
 			if (structure.isCascading())
-				cascading.addAll(structure.getKeys());
+				cascading.addAll(structure.keys());
 
 		return cascading;
 	}

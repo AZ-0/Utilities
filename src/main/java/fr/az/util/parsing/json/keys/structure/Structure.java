@@ -37,15 +37,17 @@ public abstract class Structure implements Serializable
 
 	public abstract void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException;
 
+	public void clear() { this.values.clear(); }
+
 	/**
 	 * @return an immutable list of this Structure's key
 	 */
-	public List<Key> getKeys() { return this.keys; }
+	public List<Key> keys() { return this.keys; }
 
 	/**
 	 * @return a mutable map of this Structure's parsing result. Any change on the returned map reflects in the Structure
 	 */
-	public Map<Key, Object> getValues() { return this.values; }
+	public Map<Key, Object> values() { return this.values; }
 
 	/**
 	 * @return wether this structure's keys are registered for the cascade

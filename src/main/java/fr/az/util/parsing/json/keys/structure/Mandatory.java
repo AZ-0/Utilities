@@ -21,7 +21,7 @@ public class Mandatory extends Structure
 	@Override
 	public void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException
 	{
-		for (Key key : this.getKeys())
+		for (Key key : this.keys())
 			if (!parsed.contains(key.getKey()))
 				throw new JSONParsingException(parser, "Missing mandatory key: "+ key.getKey());
 	}

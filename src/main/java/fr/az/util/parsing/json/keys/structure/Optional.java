@@ -44,7 +44,7 @@ public class Optional extends Structure
 	@Override
 	public void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException
 	{
-		Map<Key, Object> values = this.getValues();
+		Map<Key, Object> values = this.values();
 
 		//Save values for cascade
 		if (this.fillCascade)

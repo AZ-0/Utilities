@@ -37,8 +37,8 @@ public class OnlyNKeys extends Structure
 	@Override
 	public void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException
 	{
-		if (this.getValues().size() != this.amount)
-			throw new JSONParsingException(parser, this.errorMessage + this.getKeys());
+		if (this.values().size() != this.amount)
+			throw new JSONParsingException(parser, this.errorMessage + this.keys());
 	}
 
 	private void updateErrorMessage()

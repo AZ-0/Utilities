@@ -46,7 +46,7 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	@SuppressWarnings("unchecked")
 	default O get(Structure from)
 	{
-		return (O) from.getValues().get(this);
+		return (O) from.values().get(this);
 	}
 
 	default O opt(Structure from, O byDefault)			 { return this.opt(from).orElse(byDefault); }
@@ -55,7 +55,7 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	@SuppressWarnings("unchecked")
 	default Optional<O> opt(Structure from)
 	{
-		Object obj = from.getValues().get(this);
+		Object obj = from.values().get(this);
 
 		try
 		{

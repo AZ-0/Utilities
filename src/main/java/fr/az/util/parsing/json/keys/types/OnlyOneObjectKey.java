@@ -23,7 +23,7 @@ public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 	@Override @SuppressWarnings("unchecked")
 	default T build(List<Structure> structures) throws JSONParsingException
 	{
-		return (T) structures.get(0).getValues().values().stream().findAny().get();
+		return (T) structures.get(0).values().values().iterator().next();
 	}
 
 	@Override default List<Structure> getStructures() { return Arrays.asList(new OnlyNKeys(1, new ArrayList<>(this.getKeys()))); }
