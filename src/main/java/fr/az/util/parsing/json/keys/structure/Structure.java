@@ -1,12 +1,10 @@
 package fr.az.util.parsing.json.keys.structure;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,17 +20,22 @@ public abstract class Structure implements Serializable
 {
 	private static final long serialVersionUID = -6165099490743167451L;
 
-	private final List<Key> keys; //Immutable
+	private final Set<Key> keys; //Immutable
 	private final Map<Key, Object> values = new HashMap<>(); //Mutable
 
 	public Structure(Key... keys)
 	{
-		this.keys = Arrays.asList(keys);
+		Set<Key> keySet = new HashSet<>();
+
+		for (Key key : keys)
+			keySet.add(key);
+
+		this.keys = Collections.unmodifiableSet(keySet);
 	}
 
 	public Structure(Collection<? extends Key> keys)
 	{
-		this.keys = Collections.unmodifiableList(new ArrayList<>(keys));
+		this.keys = Collections.unmodifiableSet(new HashSet<>(keys));
 	}
 
 	public abstract void process(ObjectKey<?> parser, JSONObject source, Set<String> parsed, Map<Key, Object> cascade) throws JSONParsingException;
@@ -42,7 +45,7 @@ public abstract class Structure implements Serializable
 	/**
 	 * @return an immutable list of this Structure's key
 	 */
-	public List<Key> keys() { return this.keys; }
+	public Set<Key> keys() { return this.keys; }
 
 	/**
 	 * @return a mutable map of this Structure's parsing result. Any change on the returned map reflects in the Structure

@@ -21,12 +21,12 @@ public class Optional extends Structure
 
 	public Optional(Key... keys)
 	{
-		this(true, true, keys);
+		this(true, false, keys);
 	}
 
 	public Optional(Collection<? extends Key> keys)
 	{
-		this(true, true, keys);
+		this(true, false, keys);
 	}
 
 	public Optional(boolean fillCascade, boolean retrieveCascade, Key... keys)

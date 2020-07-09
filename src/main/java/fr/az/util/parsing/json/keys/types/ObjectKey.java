@@ -2,6 +2,7 @@ package fr.az.util.parsing.json.keys.types;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,7 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	 * @throws JSONParsingException
 	 */
 	@SuppressWarnings("unchecked")
-	default void parse(List<Key> keys, JSONObject source, Set<String> parsed, Map<Key, Object> cascade, Map<Key, Object> values) throws JSONParsingException
+	default void parse(Set<Key> keys, JSONObject source, Set<String> parsed, Map<Key, Object> cascade, Map<Key, Object> values) throws JSONParsingException
 	{
 		for (Key k : keys)
 			if (source.has(k.getKey()) && !parsed.contains(k.getKey()))
@@ -85,7 +86,7 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 					try
 					{
 						if (k.isCascadingKey())
-							values.put(k, k.asCascadingKey().parse(cascade, source.get(k.getKey())));
+							values.put(k, k.asCascadingKey().parse(new HashMap<>(cascade), source.get(k.getKey())));
 						else
 							values.put(k, k.parse(source.get(k.getKey())));
 
@@ -107,9 +108,9 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	 * @return a {@link List} of keys registered for the cascade
 	 * @see Structure#isCascading()
 	 */
-	default List<Key> getCascadeKeys()
+	default Set<Key> getCascadeKeys()
 	{
-		List<Key> cascading = new ArrayList<>();
+		Set<Key> cascading = new HashSet<>();
 
 		for (Structure structure : this.getStructures())
 			if (structure.isCascading())

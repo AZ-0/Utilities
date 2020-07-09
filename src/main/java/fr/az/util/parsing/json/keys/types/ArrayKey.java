@@ -43,7 +43,7 @@ public interface ArrayKey<E, O> extends Key<JSONArray, List<O>>, CascadingKey<JS
 				IParser<E, O, ?> parser = this.getElementParser();
 
 				if (parser instanceof CascadingKey)
-					list.add(((CascadingKey<E, O>) parser).parse(cascade, (E) array.get(i)));
+					list.add(((CascadingKey<E, O>) parser).parse(new HashMap<>(cascade), (E) array.get(i)));
 				else
 					list.add(parser.parse((E) array.get(i)));
 			}
