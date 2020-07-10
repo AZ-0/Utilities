@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.json.JSONObject;
@@ -57,4 +58,31 @@ public abstract class Structure implements Serializable
 	 * @see CascadingKey
 	 */
 	public boolean isCascading() { return false; }
+
+	@Override
+	public String toString()
+	{
+		return this.getClass().getSimpleName() +"{keys="+ this.keys() +", values="+ this.valuesToString() +'}';
+	}
+
+	public String valuesToString()
+	{
+		StringBuilder builder = new StringBuilder('{');
+
+		boolean multiple = false;
+
+		for (Entry<Key, Object> e : this.values.entrySet())
+		{
+			if (multiple)
+				builder.append(", ");
+
+			multiple = true;
+
+			builder.append(e.getKey().getKey());
+			builder.append(": ");
+			builder.append(e.getValue());
+		}
+
+		return builder.toString();
+	}
 }
