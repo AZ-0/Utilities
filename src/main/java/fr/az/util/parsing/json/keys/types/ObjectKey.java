@@ -60,11 +60,11 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 		keys.removeAll(parsed);
 
 		if (!keys.isEmpty())
-			throw new JSONParsingException(this, "'%s' are invalid children for '%s'".formatted(String.join("', '", keys), this.getKey()));
+			throw new JSONParsingException(this, "'"+ String.join("', '", keys) +"' are invalid children for '"+ this.getKey() +"'");
 
 		try { return this.build(structures); }
 		catch (JSONParsingException e) { throw new JSONParsingException(this, e); }
-		catch (Exception e) { throw new JSONParsingException(this, e); }
+		catch (Throwable t) { throw new JSONParsingException(this, t); }
 	}
 
 	/**
@@ -79,23 +79,23 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	@SuppressWarnings("unchecked")
 	default void parse(Set<Key> keys, JSONObject source, Set<String> parsed, Map<Key, Object> cascade, Map<Key, Object> values) throws JSONParsingException
 	{
-		for (Key k : keys)
-			if (source.has(k.getKey()) && !parsed.contains(k.getKey()))
+		for (Key key : keys)
+			if (source.has(key.getKey()) && !parsed.contains(key.getKey()))
 				try
 				{
 					try
 					{
-						if (k.isCascadingKey())
-							values.put(k, k.asCascadingKey().parse(new HashMap<>(cascade), source.get(k.getKey())));
+						if (key.isCascadingKey())
+							values.put(key, key.asCascadingKey().parse(new HashMap<>(cascade), source.get(key.getKey())));
 						else
-							values.put(k, k.parse(source.get(k.getKey())));
+							values.put(key, key.parse(source.get(key.getKey())));
 
-						parsed.add(k.getKey());
+						parsed.add(key.getKey());
 					}
 					catch (JSONParsingException e) { throw e; }
-					catch(Exception e)	{ throw new JSONParsingException(k, e); }
+					catch (Throwable t)	{ throw new JSONParsingException(key, t); }
 				}
-				catch(JSONParsingException e) { throw new JSONParsingException(this, e); }
+		catch(JSONParsingException e) { throw new JSONParsingException(this, e); }
 	}
 
 	/**

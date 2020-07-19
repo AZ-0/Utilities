@@ -32,13 +32,15 @@ version = '1.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-tasks.withType(JavaCompile) { options.encoding = 'UTF-8' }
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
 
-configurations { extraLibs }
+configurations { extra }
 
 jar {
 	doFirst {
-		from { configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) } }
+		from { configurations.extra.collect { it.isDirectory() ? it : zipTree(it) } }
 		from sourceSets.main.allSource
 	}
 }
@@ -48,13 +50,13 @@ repositories {
 }
 
 dependencies {
-	configurations.compile.extendsFrom(configurations.extraLibs)
-	extraLibs 'org.json:json:20180813'
+	configurations.implementation.extendsFrom(configurations.extra)
+	extra 'org.json:json:20180813'
 }
 
 task runPython(type:Exec) {
-   workingDir = projectDir
-   commandLine 'py', 'script_move.py', 'Utilities', version
+	workingDir = projectDir
+	commandLine 'py', 'script_move.py', 'Utilities', version
 }
 
 build.finalizedBy(runPython)

@@ -18,7 +18,7 @@ public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>
 {
 	private static final long serialVersionUID = 9204202544208385246L;
 
-	private final ObjectKey<T> parser = new ObjectKey<>()
+	private final ObjectKey<T> parser = new ObjectKey<T>()
 	{
 		private static final long serialVersionUID = 8862878584229594393L;
 

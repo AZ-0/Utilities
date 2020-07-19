@@ -11,7 +11,7 @@ import fr.az.util.parsing.json.keys.Key;
  *
  * @param <E> the Enum type
  */
-public interface EnumKey<E extends Enum<E>> extends Key<String, E>
+public interface EnumKey<E> extends Key<String, E>
 {
 	/**
 	 * Parse the Enum value
@@ -23,15 +23,13 @@ public interface EnumKey<E extends Enum<E>> extends Key<String, E>
 		Predicate<String> matcher = this.ignoreCase() ? name::equalsIgnoreCase : name::equals;
 
 		for (E element : array)
-			if (matcher.test(element.name()))
+			if (matcher.test(this.name(element)))
 				return element;
 
 		throw new JSONParsingException(this, "Unknown enum constant: "+ name);
 	}
 
-	/**
-	 * @return the E {@linkplain Class}
-	 */
+	String name(E element);
 	E[] getValues();
 
 	/**
