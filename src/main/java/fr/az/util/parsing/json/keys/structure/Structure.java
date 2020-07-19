@@ -53,6 +53,14 @@ public abstract class Structure implements Serializable
 	 */
 	public Map<Key, Object> values() { return this.values; }
 
+	@SuppressWarnings("unchecked")
+	public <K extends Key, V> Map<K, V> cast()
+	{
+		Map<K, V> casted = new HashMap<>();
+		this.values.forEach((k, v) -> casted.put((K) k, (V) v));
+		return casted;
+	}
+
 	/**
 	 * @return wether this structure's keys are registered for the cascade
 	 * @see CascadingKey
