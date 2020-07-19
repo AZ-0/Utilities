@@ -15,10 +15,11 @@ import fr.az.util.parsing.json.keys.Key;
  * This class handles the parsing of arrays
  * @author A~Z
  *
- * @param <E> Array's elements input type
+ * @param <E> Input type, a JSON primitive type [raw type wrapper (except char and float), String, JSONArray, JSONObject]
+ * If this type is JSONObject, an {@linkplain ObjectArrayKey} might prove more appropriate
  * @param <O> Output type
  */
-public interface ArrayKey<E, O> extends Key<JSONArray, List<O>>, CascadingKey<JSONArray, List<O>>
+public interface ArrayKey<E, O> extends CascadingKey<JSONArray, List<O>>
 {
 	/**
 	 * Parse a JSONArray containing any number of O objects.
@@ -42,8 +43,8 @@ public interface ArrayKey<E, O> extends Key<JSONArray, List<O>>, CascadingKey<JS
 			{
 				IParser<E, O, ?> parser = this.getElementParser();
 
-				if (parser instanceof CascadingKey)
-					list.add(((CascadingKey<E, O>) parser).parse(new HashMap<>(cascade), (E) array.get(i)));
+				if (parser instanceof CascadingKey<E, O> cascading)
+					list.add(cascading.parse(new HashMap<>(cascade), (E) array.get(i)));
 				else
 					list.add(parser.parse((E) array.get(i)));
 			}

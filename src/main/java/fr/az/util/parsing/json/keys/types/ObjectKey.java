@@ -22,7 +22,7 @@ import fr.az.util.parsing.json.keys.structure.Structure;
  * @see ObjectKey#build(Map) {@literal build(Map<Key,Object>)}
  * @param <T> the built object type
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings("rawtypes")
 public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 {
 	List<Key> EMPTY_KEY_LIST = Collections.emptyList();
@@ -60,7 +60,7 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 		keys.removeAll(parsed);
 
 		if (!keys.isEmpty())
-			throw new JSONParsingException(this, '\''+ String.join("', '", keys) +"' are invalid children for '"+ this.getKey() +'\'');
+			throw new JSONParsingException(this, "'%s' are invalid children for '%s'".formatted(String.join("', '", keys), this.getKey()));
 
 		try { return this.build(structures); }
 		catch (JSONParsingException e) { throw new JSONParsingException(this, e); }

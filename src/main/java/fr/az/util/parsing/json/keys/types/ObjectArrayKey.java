@@ -3,7 +3,6 @@ package fr.az.util.parsing.json.keys.types;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fr.az.util.parsing.json.JSONParsingException;
@@ -15,11 +14,11 @@ import fr.az.util.parsing.json.keys.structure.Structure;
  * @see ObjectKey
  * @param <T> the object built by a single JSONObject
  */
-public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>, CascadingKey<JSONArray, List<T>>
+public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>
 {
 	private static final long serialVersionUID = 9204202544208385246L;
 
-	private final ObjectKey<T> parser = new ObjectKey<T>()
+	private final ObjectKey<T> parser = new ObjectKey<>()
 	{
 		private static final long serialVersionUID = 8862878584229594393L;
 
@@ -51,4 +50,6 @@ public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>, Casc
 	@Override public ObjectKey<T> getElementParser() { return this.parser; }
 	@Override public boolean isObjectArrayKey() { return true; }
 	@Override public ObjectArrayKey<T> asObjectArrayKey() { return this; }
+
+	@Override public String toString() { return this.getKey(); }
 }
