@@ -2,7 +2,7 @@ package fr.az.util.parsing.json.keys.commons;
 
 import fr.az.util.parsing.json.keys.types.EnumKey;
 
-public class KeySimpleEnum<E extends Enum<E>> implements EnumKey<E>
+public class SimpleEnumKey<E extends Enum<E>> implements EnumKey<E>
 {
 	private static final long serialVersionUID = -8241732881464993850L;
 
@@ -10,12 +10,12 @@ public class KeySimpleEnum<E extends Enum<E>> implements EnumKey<E>
 	private final String name;
 	private final boolean ignoreCase;
 
-	public KeySimpleEnum(Class<E> enumClass, String name)
+	public SimpleEnumKey(Class<E> enumClass, String name)
 	{
 		this(enumClass, name, true);
 	}
 
-	public KeySimpleEnum(Class<E> enumClass, String name, boolean ignoreCase)
+	public SimpleEnumKey(Class<E> enumClass, String name, boolean ignoreCase)
 	{
 		this.clazz = enumClass;
 		this.name = name;
