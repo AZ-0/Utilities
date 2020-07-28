@@ -50,6 +50,5 @@ public abstract class ObjectArrayKey<T> implements ArrayKey<JSONObject, T>
 	@Override public ObjectKey<T> getElementParser() { return this.parser; }
 	@Override public boolean isObjectArrayKey() { return true; }
 	@Override public ObjectArrayKey<T> asObjectArrayKey() { return this; }
-
 	@Override public String toString() { return this.getKey(); }
 }

@@ -14,13 +14,23 @@ public class KeyValue<T extends Object> implements Key<T, T>
 {
 	private static final long serialVersionUID = 6047427904199278229L;
 
-	public static final KeyValue<Object> KEY = new KeyValue<>();
+	public static final KeyValue<Object> KEY = new KeyValue<>(Object.class);
 
+	private final Class<T> expected;
 	private final String name;
 
-	public KeyValue() { this("value"); }
-	public KeyValue(String name) { this.name = name; }
+	public KeyValue(Class<T> expected)
+	{
+		this(expected, "value");
+	}
+
+	public KeyValue(Class<T> expected, String name)
+	{
+		this.expected = expected;
+		this.name = name;
+	}
 
 	@Override public T parse(T t) { return t; }
+	@Override public Class<T> expectedType() { return this.expected; }
 	@Override public String getKey() { return this.name; }
 }

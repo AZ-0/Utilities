@@ -39,8 +39,9 @@ public class KeyString implements Key<String, String>
 		return from;
 	}
 
-	@Override
-	public String getKey() { return this.name; }
 	public String getPattern() { return this.pattern; }
 	public Predicate<String> getRegex() { return this.regex; }
+
+	@Override public Class<String> expectedType() { return String.class; }
+	@Override public String getKey() { return this.name; }
 }

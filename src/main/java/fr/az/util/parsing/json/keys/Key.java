@@ -37,6 +37,8 @@ public interface Key<I,O> extends IParser<I, O, JSONParsingException>
 	 */
 	String getKey();
 
+	Class<I> expectedType();
+
 	/**
 	 * Trace the key in order to locate a {@linkplain JSONParsingException} within the structure
 	 * @return the representation of this key

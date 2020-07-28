@@ -58,4 +58,6 @@ public abstract class KeyNumber<N extends Number> implements Key<Number, N>
 	public String getKey() { return this.name; }
 	public N getMin() { return this.min; }
 	public N getMax() { return this.max; }
+
+	@Override public Class<Number> expectedType() { return Number.class; }
 }

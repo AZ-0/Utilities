@@ -19,6 +19,31 @@ public class JSONParsingException extends ParsingException
 {
 	private static final long serialVersionUID = -7251507461751933941L;
 
+	public static JSONParsingException of(Key<?, ?> at, Throwable source, Key<?, ?> trace)
+	{
+		return of(at, reason(source), trace);
+	}
+
+	public static JSONParsingException of(Key<?, ?> at, Class<?> expected, Class<?> actual, Key<?, ?>... trace)
+	{
+		return of(at, reason(expected, actual), trace);
+	}
+
+	public static JSONParsingException of(Key<?, ?> at, String reason, Key<?, ?>... trace)
+	{
+		StringBuilder finalTrace = new StringBuilder(at.trace());
+
+		for (Key<?, ?> key : trace)
+			finalTrace.append('.' + key.trace());
+
+		return new JSONParsingException(at, reason, finalTrace.toString());
+	}
+
+	public static final String reason(Throwable source) { return source.getMessage(); }
+
+	public static final String reason(Class<?> expected, Class<?> actual) {
+		return "Expected "+ expected.getSimpleName() +" but "+ actual.getSimpleName() +" was provided"; }
+
 	private final Key<?,?> key;
 	private final String trace;
 
@@ -27,13 +52,19 @@ public class JSONParsingException extends ParsingException
 	 * @param at the {@link Key} initializing the trace
 	 * @param reason the reason this exception was thrown
 	 */
-	public JSONParsingException(Key<?,?> at, String reason) {
-		this(at, reason, at.trace()); }
+	public JSONParsingException(Key<?,?> at, String reason)
+	{
+		this(at, reason, at.trace());
+	}
 
 	public JSONParsingException(Key<?, ?> at, Throwable source)
 	{
-		this(at, source.getMessage(), at.trace());
-		source.printStackTrace();
+		this(at, reason(source), at.trace());
+	}
+
+	public JSONParsingException(Key<?, ?> at, Class<?> expected, Class<?> actual)
+	{
+		this(at, reason(expected, actual), at.trace());
 	}
 
 	/**
@@ -43,7 +74,7 @@ public class JSONParsingException extends ParsingException
 	 */
 	public JSONParsingException(Key<?,?> at, JSONParsingException source)
 	{
-		this(at, source.getMessage(), at.trace() +'.'+ source.trace());
+		this(at, reason(source), at.trace() +'.'+ source.trace());
 	}
 
 	private JSONParsingException(Key<?,?> at, String reason, String trace)

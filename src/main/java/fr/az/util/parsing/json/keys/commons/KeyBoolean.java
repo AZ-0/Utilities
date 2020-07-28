@@ -6,6 +6,6 @@ public class KeyBoolean extends KeyValue<Boolean>
 
 	public static final KeyBoolean KEY = new KeyBoolean();
 
-	public KeyBoolean() {}
-	public KeyBoolean(String name) { super(name); }
+	public KeyBoolean()				{ super(Boolean.class); }
+	public KeyBoolean(String name)	{ super(Boolean.class, name); }
 }

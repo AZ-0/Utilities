@@ -1,7 +1,7 @@
 package fr.az.util.parsing.json.keys.types;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import fr.az.util.parsing.json.JSONParsingException;
@@ -26,5 +26,9 @@ public interface OnlyOneObjectKey<T> extends ObjectKey<T>
 		return (T) structures.get(0).values().values().iterator().next();
 	}
 
-	@Override default List<Structure> getStructures() { return Arrays.asList(new OnlyNKeys(1, new ArrayList<>(this.getKeys()))); }
+	@Override
+	default List<Structure> getStructures()
+	{
+		return Collections.singletonList(new OnlyNKeys(1, new ArrayList<>(this.getKeys())));
+	}
 }

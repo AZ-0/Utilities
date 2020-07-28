@@ -1,13 +1,15 @@
 package fr.az.util.parsing.json.keys.types;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,30 +25,45 @@ import fr.az.util.parsing.json.JSONParsingException;
  */
 public interface RootKey<T> extends ObjectKey<T>
 {
-	static <T> List<T> load(File rootFile, RootKey<T> root)
+	default Set<T>	loadSet	(File root) { return this.load(root, HashSet  ::new);	  }
+	default List<T> loadList(File root) { return this.load(root, ArrayList::new); }
+
+	default <C extends Collection<T>> C load(File root, Supplier<C> collection)
 	{
-		File folder = new File(rootFile.getAbsolutePath() + File.separatorChar + root.getFolder());
-		List<T> loaded = new ArrayList<>();
+		File folder = new File(root, this.getFolder());
+		C loaded = collection.get();
 
 		if (folder.exists())
 		{
-			root.logInfo("§6Loading " + root.getKey() +":");
+			this.logInfo("Loading " + this.getKey() +":");
+
 			for (File json : folder.listFiles())
 			{
-				root.logInfo("§b - "+ json.getName());
-				try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(json))))
-				{
-					T result = root.parse(reader.lines().collect(Collectors.joining("\n")), json.getName());
-					if (result != null) loaded.add(result);
-				} catch (IOException e) { root.logError("&4Failed with exception: "+ e.getClass().getSimpleName()); }
+				this.logInfo(" - "+ json.getName());
+				T parsed = this.loadFile(json.toPath());
+
+				if (parsed != null)
+					loaded.add(parsed);
 			}
 		} else
-			root.logError("§4Found no folder of path: "+ folder.getPath());
+			this.logError("Found no folder of path: "+ folder.getAbsolutePath());
 
 		return loaded;
 	}
 
-	default List<T> load(File rootFile) { return RootKey.load(rootFile, this); }
+	default T loadFile(Path file)
+	{
+		try
+		{
+			String content = String.join("\n", Files.readAllLines(file));
+			return this.parse(content, file.getFileName().toString());
+		}
+		catch (IOException e)
+		{
+			this.logError("Failed with exception: "+ e.getClass().getSimpleName());
+			return null;
+		}
+	}
 
 	/**
 	 * Effectively calls {@linkplain RootKey#parse(JSONObject)} with a {@linkplain JSONObject} instanciated from the specified content.
@@ -57,8 +74,14 @@ public interface RootKey<T> extends ObjectKey<T>
 	 */
 	default T parse(String content, String file)
 	{
-		try { return this.parse(new JSONObject(content), file); }
-		catch (JSONException e) { this.handleException(new JSONParsingException(this, "Malformated JSON: "+ e.getMessage()), file); }
+		try
+		{
+			return this.parse(new JSONObject(content), file);
+		}
+		catch (JSONException e)
+		{
+			this.handleException(new JSONParsingException(this, "Malformated JSON: "+ e.getMessage()), file);
+		}
 
 		return null;
 	}
@@ -72,9 +95,12 @@ public interface RootKey<T> extends ObjectKey<T>
 	 */
 	default T parse(JSONObject content, String file)
 	{
-		try { return this.parse(content); }
+		try
+		{
+			return this.parse(content);
+		}
 		catch (JSONParsingException e) { this.handleException(e, file); }
-		catch (Exception e) { this.handleException(new JSONParsingException(this, e.getMessage()), file); }
+		catch (Throwable t) { this.handleException(new JSONParsingException(this, t), file); }
 
 		return null;
 	}

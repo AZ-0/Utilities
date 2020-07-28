@@ -22,6 +22,12 @@ import fr.az.util.parsing.json.keys.Key;
 public interface ArrayKey<E, O> extends CascadingKey<JSONArray, List<O>>
 {
 	/**
+	 * Get a {@linkplain IParser} parsing for every single I element of the array into a O object
+	 * @return a IParser
+	 */
+	IParser<E, O, ?> getElementParser();
+
+	/**
 	 * Parse a JSONArray containing any number of O objects.
 	 * If the array contains a single element, it is possible to only write this element instead.
 	 * @param cascade
@@ -55,15 +61,10 @@ public interface ArrayKey<E, O> extends CascadingKey<JSONArray, List<O>>
 		return list;
 	}
 
-	/**
-	 * Get a {@linkplain IParser} parsing for every single I element of the array into a O object
-	 * @return a IParser
-	 */
-	IParser<E, O, ?> getElementParser();
-
+	@Override default Class<JSONArray> expectedType() { return JSONArray.class; }
 	@Override default boolean isArrayKey() { return true; }
 	@Override default ArrayKey<E, O> asArrayKey() { return this; }
-	@Override public default String trace() { return this.getKey() +'['+ Private.INDEX_TRACE.get(this) +']'; }
+	@Override default String trace() { return this.getKey() +'['+ Private.INDEX_TRACE.get(this) +']'; }
 }
 
 final class Private

@@ -37,6 +37,12 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	T build(List<Structure> structures) throws JSONParsingException;
 
 	/**
+	 * Get a {@linkplain List} of structures which define how the keys within this compound should be used.
+	 * @return a {@literal List<Structure>}
+	 */
+	List<Structure> getStructures();
+
+	/**
 	 * @param cascade
 	 * @param source
 	 * @return
@@ -80,29 +86,33 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 	default void parse(Set<Key> keys, JSONObject source, Set<String> parsed, Map<Key, Object> cascade, Map<Key, Object> values) throws JSONParsingException
 	{
 		for (Key key : keys)
-			if (source.has(key.getKey()) && !parsed.contains(key.getKey()))
+		{
+			String id = key.getKey();
+
+			if (source.has(id) && !parsed.contains(id))
+			{
+				Object value, raw = source.get(id);
+
 				try
 				{
-					try
-					{
-						if (key.isCascadingKey())
-							values.put(key, key.asCascadingKey().parse(new HashMap<>(cascade), source.get(key.getKey())));
-						else
-							values.put(key, key.parse(source.get(key.getKey())));
+					if (key.isCascadingKey())
+						value = key.asCascadingKey().parse(new HashMap<>(cascade), raw);
+					else
+						value = key.parse(raw);
 
-						parsed.add(key.getKey());
-					}
-					catch (JSONParsingException e) { throw e; }
-					catch (Throwable t)	{ throw new JSONParsingException(key, t); }
+					values.put(key, value);
+					parsed.add(id);
 				}
-		catch(JSONParsingException e) { throw new JSONParsingException(this, e); }
+				catch (ClassCastException e)	{ throw JSONParsingException.of(this, key.expectedType(), raw.getClass(), key); }
+				catch (JSONParsingException e)	{ throw new JSONParsingException(this, e); }
+				catch (Throwable t)
+				{
+					t.printStackTrace();
+					throw JSONParsingException.of(this, t, key);
+				}
+			}
+		}
 	}
-
-	/**
-	 * Get a {@linkplain List} of structures which define how the keys within this compound should be used.
-	 * @return a {@literal List<Structure>}
-	 */
-	List<Structure> getStructures();
 
 	/**
 	 * @return a {@link List} of keys registered for the cascade
@@ -119,6 +129,7 @@ public interface ObjectKey<T> extends CascadingKey<JSONObject, T>
 		return cascading;
 	}
 
+	@Override default Class<JSONObject> expectedType() { return JSONObject.class; }
 	@Override default boolean isObjectKey() { return true; }
 	@Override default ObjectKey<T> asObjectKey() { return this; }
 }

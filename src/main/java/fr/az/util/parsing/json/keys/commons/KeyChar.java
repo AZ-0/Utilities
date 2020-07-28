@@ -23,5 +23,6 @@ public class KeyChar implements Key<String, Character>
 		return from.charAt(0);
 	}
 
+	@Override public Class<String> expectedType() { return String.class; }
 	@Override public String getKey() { return this.name; }
 }

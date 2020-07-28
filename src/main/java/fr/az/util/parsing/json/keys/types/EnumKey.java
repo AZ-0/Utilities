@@ -37,4 +37,6 @@ public interface EnumKey<E> extends Key<String, E>
 	 * @return {@code true} by default
 	 */
 	default boolean ignoreCase() { return true; }
+
+	@Override default Class<String> expectedType() { return String.class; }
 }
