@@ -1,15 +1,8 @@
 package fr.az.util.parsing.json.keys.types;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,44 +18,10 @@ import fr.az.util.parsing.json.JSONParsingException;
  */
 public interface RootKey<T> extends ObjectKey<T>
 {
-	default Set<T>	loadSet	(File root) { return this.load(root, HashSet  ::new);	  }
-	default List<T> loadList(File root) { return this.load(root, ArrayList::new); }
-
-	default <C extends Collection<T>> C load(File root, Supplier<C> collection)
+	default T loadFile(Path file) throws IOException
 	{
-		File folder = new File(root, this.getFolder());
-		C loaded = collection.get();
-
-		if (folder.exists())
-		{
-			this.logInfo("Loading " + this.getKey() +":");
-
-			for (File json : folder.listFiles())
-			{
-				this.logInfo(" - "+ json.getName());
-				T parsed = this.loadFile(json.toPath());
-
-				if (parsed != null)
-					loaded.add(parsed);
-			}
-		} else
-			this.logError("Found no folder of path: "+ folder.getAbsolutePath());
-
-		return loaded;
-	}
-
-	default T loadFile(Path file)
-	{
-		try
-		{
-			String content = String.join("\n", Files.readAllLines(file));
-			return this.parse(content, file.getFileName().toString());
-		}
-		catch (IOException e)
-		{
-			this.logError("Failed with exception: "+ e.getClass().getSimpleName());
-			return null;
-		}
+		String content = String.join("\n", Files.readAllLines(file));
+		return this.parse(content, file.getFileName().toString());
 	}
 
 	/**
@@ -80,7 +39,7 @@ public interface RootKey<T> extends ObjectKey<T>
 		}
 		catch (JSONException e)
 		{
-			this.handleException(new JSONParsingException(this, "Malformated JSON: "+ e.getMessage()), file);
+			this.onError(new JSONParsingException(this, "Malformated JSON: "+ e.getMessage()), file);
 		}
 
 		return null;
@@ -99,14 +58,11 @@ public interface RootKey<T> extends ObjectKey<T>
 		{
 			return this.parse(content);
 		}
-		catch (JSONParsingException e) { this.handleException(e, file); }
-		catch (Throwable t) { this.handleException(new JSONParsingException(this, t), file); }
+		catch (JSONParsingException e) { this.onError(e, file); }
+		catch (Throwable t) { this.onError(new JSONParsingException(this, t), file); }
 
 		return null;
 	}
 
-	void handleException(JSONParsingException e, String file);
-	void logInfo(String info);
-	void logError(String error);
-	String getFolder();
+	void onError(JSONParsingException e, String file);
 }
