@@ -51,7 +51,7 @@ repositories {
 
 dependencies {
 	configurations.implementation.extendsFrom(configurations.extra)
-	extra 'org.json:json:20180813'
+	extra 'org.json:json:20200518'
 }
 
 task runPython(type:Exec) {
